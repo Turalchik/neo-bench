@@ -18,6 +18,7 @@ type (
 		Wait()
 		Prepare(ctx context.Context, vote bool, opts BenchOptions)
 		Sender(ctx context.Context)
+		SendConflictPairs(ctx context.Context)
 		Parser(ctx context.Context, block *block.Block)
 	}
 
@@ -407,6 +408,10 @@ func (d *doer) Sender(ctx context.Context) {
 
 	d.waiter.Wait()
 
+	d.reportSendResult(start)
+}
+
+func (d *doer) reportSendResult(start time.Time) {
 	since := time.Since(start)
 	count := d.countTxs.Load()
 	errCount := d.countErr.Load()

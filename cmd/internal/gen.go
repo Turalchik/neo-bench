@@ -52,6 +52,8 @@ const (
 	GASTransfer = "gas"
 	// ContractTransfer is the type of deployed NEP17 contract transfer tx.
 	ContractTransfer = "nep17"
+	// ConflictTransfer is the type of conflicting transaction pairs, see generateConflictPairs.
+	ConflictTransfer = "conflict"
 )
 
 // newNEOTransferTx returns NEO transfer transaction with random nonce.
@@ -92,6 +94,10 @@ var genWorkerCount = runtime.NumCPU()
 
 // Generate used to generate the specified number of transactions.
 func Generate(ctx context.Context, opts BenchOptions, callback ...GenerateCallback) *Dump {
+	if strings.ToLower(opts.TransferType) == ConflictTransfer {
+		return generateConflictPairs(ctx, opts, callback...)
+	}
+
 	start := time.Now()
 	count := int(opts.TxCount)
 
